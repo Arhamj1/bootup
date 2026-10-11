@@ -1,0 +1,31 @@
+# Render Blueprint for BootUp (free web service). Secrets marked sync: false are typed
+# into Render's dashboard when the Blueprint is created; they never live in this repo.
+services:
+  - type: web
+    name: bootup
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python prefetch.py
+    startCommand: python -m server --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/status
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: HF_HOME                 # keep the model cache inside the deployed folder
+        value: /opt/render/project/src/.hf-cache
+      - key: BOOTUP_INDEX_DIR
+        value: /opt/render/project/src/index
+      - key: BOOTUP_INDEX_REPO
+        value: arhamj12/bootup-index
+      - key: BOOTUP_PUBLIC
+        value: "1"
+      - key: BOOTUP_EMBED_BACKEND
+        value: onnx
+      - key: BOOTUP_VECTOR_BACKEND
+        value: numpy
+      - key: GROQ_API_KEY
+        sync: false
+      - key: BOOTUP_ACCESS_CODE
+        sync: false
+      - key: HF_TOKEN
+        sync: false
