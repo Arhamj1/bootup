@@ -5,7 +5,8 @@ services:
     name: bootup
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt && python prefetch.py
+    # Light runtime (no PyTorch, no ChromaDB) so it fits the free tier's 512 MB.
+    buildCommand: pip install -r deploy/render/requirements.txt && python deploy/render/prefetch.py
     startCommand: python -m server --host 0.0.0.0 --port $PORT
     healthCheckPath: /api/status
     envVars:

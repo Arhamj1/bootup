@@ -1,0 +1,10 @@
+# Light runtime for Render's free tier (512 MB): no PyTorch, no ChromaDB.
+# The embedding model runs through ONNX Runtime; vector search uses index/vectors.npy.
+numpy>=2,<3
+onnxruntime>=1.18
+tokenizers>=0.19
+huggingface_hub>=1.0
+rank_bm25==0.2.2
+groq>=1.7,<2
+fastapi>=0.115,<1
+uvicorn>=0.30

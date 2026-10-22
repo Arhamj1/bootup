@@ -1,10 +1,15 @@
-# Light runtime for Render's free tier (512 MB): no PyTorch, no ChromaDB.
-# The embedding model runs through ONNX Runtime; vector search uses index/vectors.npy.
-numpy>=2,<3
-onnxruntime>=1.18
-tokenizers>=0.19
-huggingface_hub>=1.0
+# Versions the code was tested against (Python 3.12). Python 3.11 or 3.12 recommended.
+sentence-transformers>=6.1,<7
+chromadb>=1.5,<2
 rank_bm25==0.2.2
 groq>=1.7,<2
-fastapi>=0.115,<1
+streamlit>=1.64,<2
+fastapi>=0.115,<1   # backend for the React frontend (server/)
 uvicorn>=0.30
+pandas>=2
+pypdf>=5.9,<6
+python-pptx>=1.0,<2
+python-docx>=1.2,<2
+numpy>=2,<3
+pytest>=8
+reportlab>=4   # only used by the tests to make a sample PDF

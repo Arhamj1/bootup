@@ -1,0 +1,41 @@
+[server]
+# Don't stop on first run to ask for an email address in the terminal.
+showEmailPrompt = false
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Hide the Deploy button and developer menu entries during the demo.
+toolbarMode = "minimal"
+
+# Neutral zinc greys with a single teal accent. Light and dark follow the system setting.
+# Fonts load from Google Fonts; without internet they fall back to the system sans-serif.
+[theme]
+font = "Geist:https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap, sans-serif"
+codeFont = "Geist Mono:https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap, monospace"
+headingFontSizes = ["2rem", "1.5rem", "1.25rem", "1.125rem"]
+headingFontWeights = [650, 600]
+baseRadius = "0.625rem"
+buttonRadius = "0.625rem"
+showSidebarBorder = true
+
+[theme.light]
+primaryColor = "#0F766E"
+backgroundColor = "#FAFAFA"
+secondaryBackgroundColor = "#F2F2F4"
+textColor = "#18181B"
+borderColor = "#E4E4E7"
+linkColor = "#0F766E"
+codeTextColor = "#3F3F46"
+codeBackgroundColor = "#EDEDF0"
+
+[theme.dark]
+primaryColor = "#2DD4BF"
+backgroundColor = "#111113"
+secondaryBackgroundColor = "#1C1C20"
+textColor = "#ECECEE"
+borderColor = "#2C2C31"
+linkColor = "#5EEAD4"
+codeTextColor = "#D4D4D8"
+codeBackgroundColor = "#26262B"

@@ -1,0 +1,20 @@
+[
+  {
+    "id": "q01",
+    "type": "keyword",
+    "question": "REPLACE: e.g. a question that names a specific algorithm or command",
+    "evidence_any": ["REPLACE: a short phrase that appears in the chunk that answers it"]
+  },
+  {
+    "id": "q02",
+    "type": "concept",
+    "question": "REPLACE: e.g. a 'why' or 'explain' question",
+    "evidence_any": ["REPLACE: phrase A", "REPLACE: phrase B (any one is enough)"]
+  },
+  {
+    "id": "q03",
+    "type": "exam",
+    "question": "REPLACE: worded the way your exam papers word questions",
+    "evidence_any": ["REPLACE: phrase from the answering passage"]
+  }
+]

@@ -1,0 +1,143 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "katex/dist/katex.min.css";
+
+/* Design tokens. One accent (teal). Dark is the signature look ("Ethereal Glass");
+   light is a silver "Soft Structuralism" variant.
+   Radius rule: shells 28px, cores 22px, inner tiles 12px, buttons and chips fully round. */
+:root {
+  --bg: #f3f4f5;
+  --shell: rgba(18, 22, 28, 0.035);
+  --shell-ring: rgba(18, 22, 28, 0.07);
+  --core: #fdfdfd;
+  --core-hi: rgba(255, 255, 255, 0.9);
+  --muted: #eceef0;
+  --line: rgba(18, 22, 28, 0.09);
+  --ink: #121417;
+  --ink-2: #474c54;
+  --ink-3: #676d77;
+  --accent: #0f766e;
+  --accent-ink: #f4fffd;
+  --accent-soft: rgba(15, 118, 110, 0.09);
+  --accent-text: #0f766e;
+  --glow-a: rgba(15, 118, 110, 0.13);
+  --glow-b: rgba(15, 118, 110, 0.06);
+  --shadow: 0 1px 1px rgba(18, 22, 28, 0.03), 0 30px 60px -32px rgba(15, 70, 66, 0.28);
+  --grain: 0.03;
+  color-scheme: light;
+}
+.dark {
+  --bg: #07080a;
+  --shell: rgba(255, 255, 255, 0.035);
+  --shell-ring: rgba(255, 255, 255, 0.07);
+  --core: #0e1013;
+  --core-hi: rgba(255, 255, 255, 0.06);
+  --muted: #16191d;
+  --line: rgba(255, 255, 255, 0.08);
+  --ink: #edeef0;
+  --ink-2: #aab0b8;
+  --ink-3: #7f858e;
+  --accent: #2dd4bf;
+  --accent-ink: #03211e;
+  --accent-soft: rgba(45, 212, 191, 0.1);
+  --accent-text: #5eead4;
+  --glow-a: rgba(45, 212, 191, 0.12);
+  --glow-b: rgba(20, 184, 166, 0.05);
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
+  --grain: 0.045;
+  color-scheme: dark;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+  --color-bg: var(--bg);
+  --color-shell: var(--shell);
+  --color-core: var(--core);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-text: var(--accent-text);
+  --shadow-float: var(--shadow);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html, body, #root { min-height: 100dvh; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: "ss01", "cv11";
+}
+/* Ambient glow and film grain live on fixed, non-interactive layers (no repaint on scroll). */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60rem 36rem at 12% -8%, var(--glow-a), transparent 60%),
+    radial-gradient(48rem 32rem at 100% 8%, var(--glow-b), transparent 65%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  pointer-events: none;
+  opacity: var(--grain);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 12px; }
+::selection { background: var(--accent-soft); }
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+/* Double-bezel: outer shell (tray) + inner core (plate). */
+.shell { background: var(--shell); box-shadow: inset 0 0 0 1px var(--shell-ring), var(--shadow); padding: 6px; border-radius: 28px; }
+.core { background: var(--core); border-radius: 22px; box-shadow: inset 0 1px 0 var(--core-hi), inset 0 0 0 1px var(--line); }
+.glass { background: color-mix(in srgb, var(--core) 72%, transparent); backdrop-filter: blur(18px) saturate(1.4);
+         -webkit-backdrop-filter: blur(18px) saturate(1.4); box-shadow: inset 0 0 0 1px var(--shell-ring), inset 0 1px 0 var(--core-hi), var(--shadow); }
+
+/* Answer text rendered from markdown */
+.answer { line-height: 1.75; color: var(--ink); font-size: 16px; }
+.answer > * + * { margin-top: 0.85em; }
+.answer ul { list-style: disc; padding-left: 1.3em; }
+.answer ol { list-style: decimal; padding-left: 1.4em; }
+.answer li + li { margin-top: 0.35em; }
+.answer li::marker { color: var(--ink-3); }
+.answer strong { font-weight: 620; }
+.answer code { font-family: var(--font-mono); font-size: 0.86em; background: var(--muted); padding: 0.12em 0.4em; border-radius: 6px; }
+.answer pre { background: var(--muted); padding: 0.9em 1em; border-radius: 12px; overflow-x: auto; }
+.answer pre code { background: none; padding: 0; }
+.answer table { border-collapse: collapse; font-size: 0.92em; }
+.answer th, .answer td { border-bottom: 1px solid var(--line); padding: 0.45em 0.75em; text-align: left; }
+.answer h1, .answer h2, .answer h3 { font-weight: 650; letter-spacing: -0.015em; }
+
+/* Streaming caret and loading shimmer */
+.caret { display: inline-block; width: 0.5em; height: 1.05em; margin-left: 2px; vertical-align: -0.15em;
+         background: var(--accent); border-radius: 3px; }
+.shimmer { background-color: var(--muted); }
+@media (prefers-reduced-motion: no-preference) {
+  .caret { animation: blink 1s steps(2, start) infinite; }
+  .shimmer { background: linear-gradient(90deg, var(--muted) 0%, var(--line) 50%, var(--muted) 100%);
+             background-size: 200% 100%; animation: shimmer 1.4s linear infinite; }
+}
+@keyframes blink { to { visibility: hidden; } }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+.flash { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }

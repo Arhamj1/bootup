@@ -1,0 +1,13 @@
+# Runtime packages for the Space (torch is installed separately, CPU build, in the Dockerfile).
+# Versions match what the local index was built with; chromadb must stay on 1.5.x to read it.
+sentence-transformers>=6.1,<7
+chromadb>=1.5.9,<1.6
+rank_bm25==0.2.2
+groq>=1.7,<2
+fastapi>=0.115,<1
+uvicorn>=0.30
+numpy>=2,<3
+pypdf>=5.9,<6
+python-pptx>=1.0,<2
+python-docx>=1.2,<2
+huggingface_hub>=1.0
