@@ -29,6 +29,10 @@ def test_extract_cited_orders_and_dedupes():
     assert extract_cited("Yes [2]. Also see [1] and again [2], [10].") == [2, 1, 10]
 
 
+def test_extract_cited_accepts_full_width_brackets():
+    assert extract_cited("Circular wait 【1】, see also 【3†L4-L9】 and [1].") == [1, 3]
+
+
 def test_missing_key_gives_clear_error(monkeypatch):
     monkeypatch.delenv("GROQ_API_KEY", raising=False)
     with pytest.raises(MissingKeyError, match="GROQ_API_KEY"):

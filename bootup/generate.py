@@ -37,10 +37,10 @@ def build_messages(question: str, hits) -> list[dict]:
 
 
 def extract_cited(answer: str) -> list[int]:
-    """Numbers cited in the answer as [n], in order of first appearance."""
+    """Numbers cited in the answer as [n] (or full-width 【n】), in order of first appearance."""
     seen: list[int] = []
-    for m in re.finditer(r"\[(\d+)\]", answer):
-        n = int(m.group(1))
+    for m in re.finditer(r"\[(\d+)\]|【(\d+)[^】\n]*】", answer):
+        n = int(m.group(1) or m.group(2))
         if n not in seen:
             seen.append(n)
     return seen

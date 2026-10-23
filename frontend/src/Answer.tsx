@@ -8,9 +8,11 @@ import type { Hit } from "./api";
 import { cx } from "./ui";
 
 /** Model output -> markdown the renderer understands:
- *  \( x \) and \[ x \] become $x$ / $$x$$, and citations [1] or [1, 2] become links we can click. */
+ *  \( x \) and \[ x \] become $x$ / $$x$$, and citations [1] or [1, 2] become links we can click.
+ *  The model sometimes cites with full-width brackets (【1】, 【1†...】), which count as [1]. */
 export function prepare(text: string) {
   return text
+    .replace(/【(\d+)[^】\n]*】/g, "[$1]")
     .replace(/\\\[([\s\S]+?)\\\]/g, (_, m) => `$$${m}$$`)
     .replace(/\\\(([\s\S]+?)\\\)/g, (_, m) => `$${m}$`)
     .replace(/\[(\d+(?:\s*,\s*\d+)+)\]/g, (_, list: string) => list.split(/\s*,\s*/).map((n) => `[${n}]`).join(""))

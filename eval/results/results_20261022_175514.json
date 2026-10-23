@@ -1,0 +1,545 @@
+{
+  "summary": {
+    "hybrid": {
+      "n": 18,
+      "hit@3": 9,
+      "hit@5": 9,
+      "mrr@10": 0.37
+    },
+    "dense": {
+      "n": 18,
+      "hit@3": 5,
+      "hit@5": 9,
+      "mrr@10": 0.264
+    },
+    "bm25": {
+      "n": 18,
+      "hit@3": 6,
+      "hit@5": 9,
+      "mrr@10": 0.371
+    }
+  },
+  "by_type": {
+    "concept": {
+      "hybrid": {
+        "n": 6,
+        "hit@3": 1,
+        "hit@5": 1,
+        "mrr@10": 0.121
+      },
+      "dense": {
+        "n": 6,
+        "hit@3": 0,
+        "hit@5": 2,
+        "mrr@10": 0.104
+      },
+      "bm25": {
+        "n": 6,
+        "hit@3": 1,
+        "hit@5": 1,
+        "mrr@10": 0.211
+      }
+    },
+    "keyword": {
+      "hybrid": {
+        "n": 6,
+        "hit@3": 3,
+        "hit@5": 3,
+        "mrr@10": 0.434
+      },
+      "dense": {
+        "n": 6,
+        "hit@3": 1,
+        "hit@5": 3,
+        "mrr@10": 0.163
+      },
+      "bm25": {
+        "n": 6,
+        "hit@3": 3,
+        "hit@5": 4,
+        "mrr@10": 0.441
+      }
+    },
+    "exam": {
+      "hybrid": {
+        "n": 6,
+        "hit@3": 5,
+        "hit@5": 5,
+        "mrr@10": 0.556
+      },
+      "dense": {
+        "n": 6,
+        "hit@3": 4,
+        "hit@5": 4,
+        "mrr@10": 0.524
+      },
+      "bm25": {
+        "n": 6,
+        "hit@3": 2,
+        "hit@5": 4,
+        "mrr@10": 0.46
+      }
+    }
+  },
+  "per_question": {
+    "hybrid": [
+      {
+        "id": "c1",
+        "type": "concept",
+        "rank": 10,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.1
+      },
+      {
+        "id": "c2",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c3",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c4",
+        "type": "concept",
+        "rank": 8,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.125
+      },
+      {
+        "id": "c5",
+        "type": "concept",
+        "rank": 2,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.5
+      },
+      {
+        "id": "c6",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k1",
+        "type": "keyword",
+        "rank": 8,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.125
+      },
+      {
+        "id": "k2",
+        "type": "keyword",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "k3",
+        "type": "keyword",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k4",
+        "type": "keyword",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "k5",
+        "type": "keyword",
+        "rank": 7,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.14285714285714285
+      },
+      {
+        "id": "k6",
+        "type": "keyword",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "e1",
+        "type": "exam",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "e2",
+        "type": "exam",
+        "rank": 6,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.16666666666666666
+      },
+      {
+        "id": "e3",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "e4",
+        "type": "exam",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "e5",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "e6",
+        "type": "exam",
+        "rank": 2,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.5
+      }
+    ],
+    "dense": [
+      {
+        "id": "c1",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c2",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c3",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c4",
+        "type": "concept",
+        "rank": 4,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.25
+      },
+      {
+        "id": "c5",
+        "type": "concept",
+        "rank": 4,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.25
+      },
+      {
+        "id": "c6",
+        "type": "concept",
+        "rank": 8,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.125
+      },
+      {
+        "id": "k1",
+        "type": "keyword",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k2",
+        "type": "keyword",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "k3",
+        "type": "keyword",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k4",
+        "type": "keyword",
+        "rank": 4,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.25
+      },
+      {
+        "id": "k5",
+        "type": "keyword",
+        "rank": 7,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.14285714285714285
+      },
+      {
+        "id": "k6",
+        "type": "keyword",
+        "rank": 4,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.25
+      },
+      {
+        "id": "e1",
+        "type": "exam",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "e2",
+        "type": "exam",
+        "rank": 6,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.16666666666666666
+      },
+      {
+        "id": "e3",
+        "type": "exam",
+        "rank": 2,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.5
+      },
+      {
+        "id": "e4",
+        "type": "exam",
+        "rank": 7,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.14285714285714285
+      },
+      {
+        "id": "e5",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "e6",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      }
+    ],
+    "bm25": [
+      {
+        "id": "c1",
+        "type": "concept",
+        "rank": 7,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.14285714285714285
+      },
+      {
+        "id": "c2",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c3",
+        "type": "concept",
+        "rank": 8,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.125
+      },
+      {
+        "id": "c4",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "c5",
+        "type": "concept",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "c6",
+        "type": "concept",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k1",
+        "type": "keyword",
+        "rank": 5,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.2
+      },
+      {
+        "id": "k2",
+        "type": "keyword",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "k3",
+        "type": "keyword",
+        "rank": null,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.0
+      },
+      {
+        "id": "k4",
+        "type": "keyword",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "k5",
+        "type": "keyword",
+        "rank": 9,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.1111111111111111
+      },
+      {
+        "id": "k6",
+        "type": "keyword",
+        "rank": 3,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 0.3333333333333333
+      },
+      {
+        "id": "e1",
+        "type": "exam",
+        "rank": 4,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.25
+      },
+      {
+        "id": "e2",
+        "type": "exam",
+        "rank": 5,
+        "hit@3": false,
+        "hit@5": true,
+        "rr": 0.2
+      },
+      {
+        "id": "e3",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "e4",
+        "type": "exam",
+        "rank": 6,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.16666666666666666
+      },
+      {
+        "id": "e5",
+        "type": "exam",
+        "rank": 1,
+        "hit@3": true,
+        "hit@5": true,
+        "rr": 1.0
+      },
+      {
+        "id": "e6",
+        "type": "exam",
+        "rank": 7,
+        "hit@3": false,
+        "hit@5": false,
+        "rr": 0.14285714285714285
+      }
+    ]
+  },
+  "n_questions_used": 18,
+  "unlabelled": [],
+  "meta": {
+    "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+    "standin": false,
+    "reportable": true,
+    "index": {
+      "embedder": "sentence-transformers/all-MiniLM-L6-v2",
+      "standin": false,
+      "dim": 384,
+      "n_chunks": 2986,
+      "n_duplicates_dropped": 20,
+      "built_at": "2026-10-12 00:37:48"
+    },
+    "settings": {
+      "top_k_each": 10,
+      "rrf_k": 60,
+      "chunk_tokens": 200
+    },
+    "run_at": "2026-10-22 17:55:14"
+  }
+}

@@ -24,13 +24,13 @@ FILES = ["app.py", "pytest.ini", "requirements.txt", "README.md", "DEMO.md", "ru
 PY_DIRS = ["bootup", "server", "tests", "tools"]            # *.py only
 TREES = ["frontend/src", "frontend/dist", "deploy"]          # whole folders
 ROOT_FROM = {"render.yaml": "deploy/render/render.yaml"}     # Render reads its Blueprint from the root
+RESULT_GLOBS = ["eval/results/results_*.json"]               # scores only (ids, ranks), shown on the Evaluation page
 GITIGNORE = """__pycache__/
 *.pyc
 .venv/
 .pytest_cache/
 frontend/node_modules/
 index/
-eval/results/
 data/raw/*
 !data/raw/README.md
 data/past_papers/
@@ -71,6 +71,11 @@ def main() -> int:
         shutil.copytree(ROOT / d, OUT / d, ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     for dst, src in ROOT_FROM.items():
         shutil.copy2(ROOT / src, OUT / dst)
+    for pattern in RESULT_GLOBS:
+        for f in ROOT.glob(pattern):
+            rel = f.relative_to(ROOT)
+            (OUT / rel).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(f, OUT / rel)
     (OUT / ".gitignore").write_text(GITIGNORE)
 
     problems = []
