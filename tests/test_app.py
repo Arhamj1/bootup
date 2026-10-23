@@ -77,7 +77,7 @@ def test_grounded_and_plain_answers_side_by_side(app_env, monkeypatch):
     assert not at.exception
     texts = [m.value for m in at.markdown]
     assert "Grounded answer citing [1]." in texts and "Plain answer without sources." in texts
-    assert len(FakeGroq.calls) == 2
+    assert len(FakeGroq.calls) == 3      # search-term rewrite, grounded answer, plain answer
     assert any("(cited)" in t for t in texts)
 
 

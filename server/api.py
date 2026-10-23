@@ -25,8 +25,8 @@ from pydantic import BaseModel, Field
 from bootup import config
 from bootup.build import run_build
 from bootup.embed import get_embedder
-from bootup.generate import (IncompleteAnswerError, MissingKeyError, extract_cited, stream_answer,
-                             stream_baseline)
+from bootup.generate import (IncompleteAnswerError, MissingKeyError, expand_query, extract_cited,
+                             search_query, stream_answer, stream_baseline)
 from bootup.index import Index
 from bootup.retrieve import MODES, Retriever
 
@@ -249,10 +249,12 @@ def ask(req: AskRequest, request: Request):
         raise HTTPException(422, f"mode must be one of {MODES}")
     check_rate(request)
     retriever = state.get_retriever()
-    hits = retriever.search(req.question, mode=req.mode, k_final=req.k)
+    terms = "" if req.retrieval_only else expand_query(req.question)
+    hits = retriever.search(search_query(req.question, terms), mode=req.mode, k_final=req.k)
 
     def events():
-        yield sse("sources", {"mode": req.mode, "hits": [hit_json(i, h) for i, h in enumerate(hits, 1)]})
+        yield sse("sources", {"mode": req.mode, "terms": terms,
+                              "hits": [hit_json(i, h) for i, h in enumerate(hits, 1)]})
         if req.retrieval_only:
             yield sse("done", {"cited": [], "skipped": True})
             return

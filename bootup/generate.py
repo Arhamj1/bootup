@@ -9,10 +9,21 @@ from . import config
 
 SYSTEM_PROMPT = (
     "You are BootUp, a study assistant for an Operating Systems course.\n"
-    "Answer the student's question using ONLY the numbered context passages provided.\n"
-    "- If the passages do not contain the answer, say so plainly instead of guessing.\n"
-    "- Cite the passages you used inline as [1], [2], and so on.\n"
+    "Answer the student's question using the numbered context passages as your main source.\n"
+    "- Cite the passages you use inline as [1], [2], and so on. Never cite a passage for something it does not say.\n"
+    "- If the passages cover the question only partly, still give a complete answer: fill the gaps with standard "
+    "operating-systems knowledge (as taught in Silberschatz, Operating System Concepts) and end each such sentence "
+    "with \"(general knowledge)\".\n"
+    "- For numerical problems or classifications, work the answer out step by step.\n"
+    "- If the question is not about operating systems or computing, say that it is outside the course material.\n"
     "- Keep the explanation clear and exam-oriented; use short paragraphs or numbered steps."
+)
+# Used before searching: turns everyday wording ("one long job holds everyone up") into the
+# textbook's terms ("convoy effect, FCFS"), so both retrievers can find the right section.
+EXPAND_PROMPT = (
+    "Rewrite the student's question as a short search query for an Operating Systems textbook "
+    "(Silberschatz, Operating System Concepts). List the main textbook terms and the names of the concepts, "
+    "algorithms or section topics an answer would cover. Reply with one line of keywords only."
 )
 NO_CONTEXT = "I couldn't find anything relevant to that in the loaded course material."
 BASELINE_PROMPT = ("You are a helpful assistant. Answer the student's Operating Systems "
@@ -100,6 +111,27 @@ def _chat_stream(client, model: str, messages: list[dict]) -> Iterator[str]:
         if not wrote:
             raise IncompleteAnswerError(OUT_OF_TOKENS)
         yield CUT_OFF_NOTE
+
+
+def expand_query(question: str, client=None, model: str = config.LLM_MODEL) -> str:
+    """Textbook keywords for the question, or "" if expansion is off or the call fails.
+
+    Expansion only helps retrieval, so any failure (no key, rate limit, empty reply) falls back
+    to searching with the question alone instead of breaking the answer.
+    """
+    if not config.QUERY_EXPANSION:
+        return ""
+    try:
+        messages = [{"role": "system", "content": EXPAND_PROMPT}, {"role": "user", "content": question}]
+        args = {**_request(model, messages), "max_tokens": config.EXPAND_MAX_TOKENS}
+        resp = (client or make_client()).chat.completions.create(**args)
+        return " ".join((resp.choices[0].message.content or "").split())[:400]
+    except Exception:
+        return ""
+
+
+def search_query(question: str, terms: str) -> str:
+    return f"{question}\n{terms}" if terms else question
 
 
 def stream_answer(question: str, hits, client=None, model: str = config.LLM_MODEL) -> Iterator[str]:

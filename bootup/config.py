@@ -33,6 +33,9 @@ TEMPERATURE = 0.2
 MAX_ANSWER_TOKENS = 2048
 REASONING_EFFORT = "low"                 # "low" | "medium" | "high"; only sent to reasoning models
 REASONING_MODEL_PREFIXES = ("openai/gpt-oss",)
+# Rewrite the question into textbook keywords before searching (one extra short model call).
+QUERY_EXPANSION = os.getenv("BOOTUP_QUERY_EXPANSION", "1") != "0"
+EXPAND_MAX_TOKENS = 600
 
 # --- demo ---------------------------------------------------------------------
 # Clickable example questions in the app, taken from the course slides; each one is

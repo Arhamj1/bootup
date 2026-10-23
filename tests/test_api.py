@@ -67,7 +67,9 @@ def test_ask_streams_sources_then_tokens_then_done(client, monkeypatch):
     tokens = [d["t"] for e, d in ev if e == "token"]
     assert len(tokens) == 2 and "".join(tokens) == "Grounded answer citing [1]."
     assert ev[-1] == ("done", {"cited": [1]})
-    assert FakeStreamGroq.calls[0]["stream"] is True
+    # first call rewrites the question into search terms, the second streams the answer
+    assert "search query" in FakeStreamGroq.calls[0]["messages"][0]["content"]
+    assert FakeStreamGroq.calls[-1]["stream"] is True
 
 
 def test_ask_without_key_reports_error_but_keeps_sources(client, monkeypatch):

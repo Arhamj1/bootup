@@ -6,8 +6,8 @@ import pytest
 from bootup.embed import HashingEmbedder
 from bootup.evaluate import (evaluate, find_leaks, first_relevant_rank, hit_at_k, load_questions,
                              reciprocal_rank)
-from bootup.generate import (NO_CONTEXT, MissingKeyError, build_messages, extract_cited,
-                             generate_answer, make_client)
+from bootup.generate import (NO_CONTEXT, MissingKeyError, build_messages, expand_query, extract_cited,
+                             generate_answer, make_client, search_query)
 from bootup.index import Index, build_index
 from bootup.ingest import Chunk, ingest_all
 from bootup.retrieve import Hit, Retriever
@@ -20,13 +20,36 @@ def _hit(i):
 def test_prompt_contains_numbered_context_and_rules():
     msgs = build_messages("What is a deadlock?", [_hit(1), _hit(2)])
     system, user = msgs[0]["content"], msgs[1]["content"]
-    assert "ONLY" in system and "[1]" in system
+    assert "main source" in system and "[1]" in system and "(general knowledge)" in system
     assert "[1] (source: file1.pdf, p.1" in user and "[2]" in user
     assert user.endswith("Question: What is a deadlock?")
 
 
 def test_extract_cited_orders_and_dedupes():
     assert extract_cited("Yes [2]. Also see [1] and again [2], [10].") == [2, 1, 10]
+
+
+def _client_replying(text=None, error=None):
+    def create(**kw):
+        if error:
+            raise error
+        return SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=text))])
+    return SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+
+
+def test_expand_query_returns_one_line_of_terms():
+    terms = expand_query("why does one long job hold everyone up?", client=_client_replying("convoy effect,\n FCFS"))
+    assert terms == "convoy effect, FCFS"
+    assert search_query("q", terms) == "q\nconvoy effect, FCFS"
+
+
+def test_expand_query_never_breaks_the_answer(monkeypatch):
+    assert expand_query("q", client=_client_replying(error=RuntimeError("rate limited"))) == ""
+    assert expand_query("q", client=_client_replying(text=None)) == ""
+    assert search_query("q", "") == "q"
+    from bootup import config
+    monkeypatch.setattr(config, "QUERY_EXPANSION", False)
+    assert expand_query("q", client=_client_replying("terms")) == ""
 
 
 def test_extract_cited_accepts_full_width_brackets():

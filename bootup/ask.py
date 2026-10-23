@@ -9,7 +9,7 @@ import argparse
 
 from . import config
 from .embed import get_embedder
-from .generate import MissingKeyError, extract_cited, generate_answer
+from .generate import MissingKeyError, expand_query, extract_cited, generate_answer, search_query
 from .index import Index
 from .retrieve import MODES, Retriever
 
@@ -32,7 +32,10 @@ def main(argv=None) -> int:
 
     embedder = get_embedder(args.embedder)
     retriever = Retriever(Index(config.INDEX_DIR, embedder), embedder)
-    hits = retriever.search(args.question, mode=args.mode, k_final=args.k)
+    terms = "" if args.no_llm else expand_query(args.question)
+    if terms:
+        print(f"Search terms added: {terms}\n")
+    hits = retriever.search(search_query(args.question, terms), mode=args.mode, k_final=args.k)
     print(f"Retrieved {len(hits)} passages ({args.mode}):\n")
     show_hits(hits)
     if args.no_llm:

@@ -16,8 +16,8 @@ import streamlit as st
 from bootup import config
 from bootup.build import run_build
 from bootup.embed import get_embedder
-from bootup.generate import (IncompleteAnswerError, MissingKeyError, extract_cited, generate_answer,
-                             generate_baseline)
+from bootup.generate import (IncompleteAnswerError, MissingKeyError, expand_query, extract_cited,
+                             generate_answer, generate_baseline, search_query)
 from bootup.index import Index
 from bootup.retrieve import MODES, Retriever
 
@@ -236,7 +236,8 @@ def show_sources(hits, cited, method, expanded, uid):
 
 
 def run_turn(question: str) -> dict:
-    hits = retriever.search(question, mode=mode, k_final=k)
+    terms = "" if retrieval_only else expand_query(question)
+    hits = retriever.search(search_query(question, terms), mode=mode, k_final=k)
     turn = {"question": question, "mode": mode, "hits": hits, "answer": None,
             "plain": None, "cited": [], "error": None}
     if retrieval_only:
