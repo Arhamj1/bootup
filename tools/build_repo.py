@@ -49,14 +49,15 @@ def main() -> int:
         print("Build the frontend first: cd frontend && npm run build")
         return 1
     git = OUT / ".git"
-    keep_git = OUT.parent / "_repo_git"
-    if git.exists():                      # keep history across rebuilds
-        shutil.move(str(git), str(keep_git))
-    if OUT.exists():
-        shutil.rmtree(OUT)
-    OUT.mkdir(parents=True)
-    if keep_git.exists():
+    keep_git = OUT.parent / "_repo_git"   # left over from older runs that moved .git aside
+    OUT.mkdir(parents=True, exist_ok=True)
+    if keep_git.exists() and not git.exists():
         shutil.move(str(keep_git), str(git))
+    # Empty the folder but keep .git (history) and the folder itself, which may be open elsewhere.
+    for child in OUT.iterdir():
+        if child.name == ".git":
+            continue
+        shutil.rmtree(child) if child.is_dir() else child.unlink()
 
     for rel in FILES:
         src = ROOT / rel

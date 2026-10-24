@@ -1,13 +1,14 @@
 # BootUp
 
-A retrieval-grounded study assistant for Operating Systems. It answers only from the course material it
-is given (lecture slides, notes and textbook chapters) and shows the slide or page each answer came from.
+A retrieval-grounded study assistant for Operating Systems. It answers from the course material it is
+given (lecture slides, notes and textbook chapters), shows the slide or page each answer came from, and
+marks anything it adds from general knowledge.
 
 Arham Jain (24BDS0366), BCSE303P Operating Systems Lab, VIT Vellore.
 
-    question -> dense search (all-MiniLM-L6-v2 embeddings) --\
-                                                              >-- Reciprocal Rank Fusion -> top 4 passages -> openai/gpt-oss-20b (Groq) -> answer + sources
-             -> keyword search (BM25) ----------------------- /
+    question -> textbook keywords -> dense search (all-MiniLM-L6-v2) --\
+                                                                       >-- Reciprocal Rank Fusion -> top 4 passages -> openai/gpt-oss-20b (Groq) -> answer + sources
+                                  -> keyword search (BM25) ---------- /
 
 ## What is in this repository
 
@@ -17,12 +18,13 @@ Arham Jain (24BDS0366), BCSE303P Operating Systems Lab, VIT Vellore.
 | `server/` | FastAPI backend: `/api/ask` streams the answer as server-sent events (sources, tokens, done) |
 | `frontend/src/` | React web app (Vite, TypeScript, Tailwind CSS). `frontend/dist/` is the built version the server serves |
 | `app.py` | The first version of the interface, in Streamlit, kept as a fallback |
-| `tests/` | 58 automated tests (pytest) on a small synthetic corpus |
+| `tests/` | 61 automated tests (pytest) on a small synthetic corpus |
 | `tools/` | `build_space.py` assembles deployment folders from an allow-list; `export_man_pages.py` exported the original man-page corpus |
 | `deploy/render/` | Render deployment (light runtime: ONNX embeddings, NumPy vector search) |
 | `deploy/space/` | Docker files for a Hugging Face Space (not used: Docker Spaces need a paid plan) |
 | `render.yaml` | Render Blueprint for the public site |
 | `eval/questions.template.json` | Template for the hand-labelled evaluation set |
+| `eval/results/` | Saved evaluation runs (scores only), shown on the Evaluation page |
 
 **Not in this repository:** the course slides and notes, the textbook, the past papers and the questions
 transcribed from them, the search index, and any API keys. The course material is copyrighted; the public
@@ -48,7 +50,7 @@ Other commands:
     python -m bootup.ask "What are the four conditions for deadlock?"        answer with sources
     python -m bootup.ask "..." --mode bm25 --no-llm                          retrieval only, no key needed
     python -m bootup.evaluate                                                three-way retrieval comparison
-    python -m pytest                                                         58 tests
+    python -m pytest                                                         61 tests
     cd frontend && npm install && npm run dev                                frontend with live reload (API on :8000)
 
 ## How it works
@@ -59,10 +61,14 @@ Other commands:
    sentence overlap; short consecutive slides are merged. Each chunk keeps its file, topic and page or slide.
 3. **Indexing.** Chunks are embedded with all-MiniLM-L6-v2 and stored in ChromaDB (also saved as a NumPy
    array); a BM25 index is built over the same chunks. Near-duplicates (cosine similarity 0.95 or more) are dropped.
-4. **Retrieval.** Dense and BM25 search each return their top 10; Reciprocal Rank Fusion (1 / (60 + rank))
+4. **Query rewriting.** A short model call turns the question into textbook keywords ("OS structures" becomes
+   monolithic, layered, microkernel, ...); the search uses the question plus these keywords. If the call fails,
+   the plain question is used.
+5. **Retrieval.** Dense and BM25 search each return their top 10; Reciprocal Rank Fusion (1 / (60 + rank))
    merges them and the best 4 are kept.
-5. **Generation.** The 4 passages go to openai/gpt-oss-20b through Groq with instructions to answer only
-   from them and cite them as [1], [2].
+6. **Generation.** The 4 passages go to openai/gpt-oss-20b through Groq. They are the main source and are cited
+   as [1], [2]; if they cover a question only partly, the model completes the answer from standard OS knowledge
+   and marks those sentences "(general knowledge)". Questions outside operating systems are declined.
 
 ## Results so far
 
@@ -76,8 +82,23 @@ correct if it came from the question's syllabus topic:
 | Hybrid (RRF) | 99/116 | 110/116 | 113/116 | 0.900 |
 
 This is a topic-level check, not passage-level accuracy, and the differences between methods (1 to 4
-questions) are too small to call one method better. The passage-level evaluation with hand-labelled
-questions (`python -m bootup.evaluate`) has not been run yet.
+questions) are too small to call one method better.
+
+Passage level (`python -m bootup.evaluate`, 18 questions each labelled with the sentence that answers it):
+
+| Method | hit@3 | hit@5 | MRR@10 |
+|---|---|---|---|
+| Dense | 5/18 | 9/18 | 0.264 |
+| BM25 | 6/18 | 9/18 | 0.371 |
+| Hybrid (RRF) | 9/18 | 9/18 | 0.370 |
+
+Most misses still retrieved a different passage that answers the question; the labels name one sentence
+while the material often says the same thing in several places. Both evaluations measure retrieval on the
+plain question, without the query rewriting step.
+
+In a final check of answers, 2 of 20 questions were answered wrongly; after adding query rewriting and the
+"(general knowledge)" rule, all 56 test questions received a relevant answer. That is a manual check, not
+a measured accuracy.
 
 ## Settings (`bootup/config.py`)
 
@@ -93,6 +114,7 @@ questions (`python -m bootup.evaluate`) has not been run yet.
 ## Known limits
 
 - Answers depend on a hosted API (internet needed, free-tier rate limits).
-- The model is told to answer only from the passages, but that is an instruction, not a guarantee: check the citations.
+- The model is told to base answers on the passages and to mark general knowledge, but that is an instruction,
+  not a guarantee: check the citations. Sentences marked "(general knowledge)" have no source to check.
 - Scanned PDFs have no text layer and are skipped; there is no OCR.
 - Sentence splitting is a simple regex; abbreviations such as "e.g." can split a sentence early.
