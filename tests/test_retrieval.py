@@ -90,7 +90,7 @@ def test_invalid_mode_rejected(retriever):
 
 
 def test_sentence_transformer_wrapper_calls_library_correctly(monkeypatch):
-    """Checks our wrapper against a fake model (the real one cannot be downloaded here)."""
+    """Checks the wrapper against a fake model, so the test needs no download."""
     import sentence_transformers
 
     seen = {}

@@ -36,5 +36,5 @@ Scanned PDFs have no text layer; BootUp reports them as skipped instead of index
 ]
 ```
 
-Do NOT put your evaluation questions in the Q&A bank. They must stay out of the index
+Keep evaluation questions out of the Q&A bank. They must stay out of the index
 (the evaluator warns if it finds one). Start with 2-3 topics, not everything.

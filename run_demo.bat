@@ -48,6 +48,6 @@ goto :eof
 
 :fail
 echo.
-echo Something went wrong. Read the message above, or see DEMO.md (Troubleshooting).
+echo Something went wrong. Read the message above.
 pause
 exit /b 1

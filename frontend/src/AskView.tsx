@@ -95,13 +95,13 @@ function Home({ status, options, setOptions, onAsk, busy }: AskProps) {
         </div>
       </section>
 
-      <IndexBento status={status} />
+      <IndexStats status={status} />
     </div>
   );
 }
 
-/** Real numbers from the last index build, laid out as an asymmetric bento. */
-function IndexBento({ status }: { status: Status | null }) {
+/** Index statistics from the last build. */
+function IndexStats({ status }: { status: Status | null }) {
   const [stats, setStats] = useState<Record<string, any> | null>(null);
   useEffect(() => { getStats().then(setStats).catch(() => setStats(null)); }, [status?.chunks]);
   if (!stats) return null;
@@ -149,7 +149,7 @@ function IndexBento({ status }: { status: Status | null }) {
             <IconTile icon={Brain} />
             <div className="min-w-0">
               <p className="truncate font-mono text-[15px] font-medium text-ink">{status?.llm_model ?? "-"}</p>
-              <p className="mt-1 text-[13px] text-ink-3">writes answers only from the passages it is given</p>
+              <p className="mt-1 text-[13px] text-ink-3">answers from the passages and cites them</p>
             </div>
           </Card>
         </Rise>
@@ -251,8 +251,8 @@ function Dock({ options, setOptions, onAsk, onStop, busy }: AskProps) {
 
 /* ------------------------------------------------------------------ One question + answer */
 
-/** Reveal streamed text at a readable pace. The model can deliver a whole answer in a fraction
- *  of a second; easing the reveal keeps the streaming visible. Finished history shows instantly. */
+/** Reveal streamed text at a readable pace; the model can send a whole answer in under a second.
+ *  Finished answers from history show at once. */
 function useReveal(target: string, animate: boolean) {
   const [shown, setShown] = useState(animate ? "" : target);
   const len = useRef(shown.length);

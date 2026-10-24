@@ -45,7 +45,6 @@ MAN_HEADING = re.compile(r"^[A-Z][A-Z0-9 &/_-]{2,40}$")
 MAN_FOLDERS = {"man", "man_pages", "manpages"}
 
 
-# ---------------------------------------------------------------- extraction
 RUN_TOGETHER = re.compile(r"\S{40,}")
 
 
@@ -128,7 +127,6 @@ def load_qa(path: Path) -> list[dict]:
     return [d for d in data if isinstance(d, dict) and d.get("question") and d.get("answer")]
 
 
-# ------------------------------------------------------------------ cleaning
 def clean_text(text: str) -> str:
     """Join hyphenated line breaks, drop bare page numbers, collapse whitespace."""
     text = re.sub(r"(\w)-\n([a-z])", r"\1\2", text)
@@ -157,7 +155,6 @@ def drop_repeated_lines(units: list[Unit], min_units: int = 4, frac: float = 0.5
     ]
 
 
-# ------------------------------------------------------------------- packing
 def split_words(words: list[str], max_words: int, overlap: int) -> list[str]:
     """Hard sliding window, used only for a single over-long sentence or slide."""
     step = max(1, max_words - overlap)
@@ -270,7 +267,6 @@ def pack_sections(units: list[Unit], prefix: str, max_words: int,
     return out
 
 
-# --------------------------------------------------------------- per-file API
 def classify(rel: Path) -> tuple[str, str]:
     """Work out (source_type, topic) from the folder layout under DATA_DIR.
 
@@ -356,7 +352,7 @@ def ingest_all(data_dir: Path):
             continue
         try:
             new = chunk_file(path, data_dir)
-        except Exception as exc:  # keep going; report at the end
+        except Exception as exc:  # report it and carry on with the other files
             skipped.append((rel, f"error: {exc}"))
             continue
         if not new:

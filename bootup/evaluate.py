@@ -29,7 +29,6 @@ QUESTION_TYPES = ("concept", "keyword", "exam")
 CUTOFF = 10
 
 
-# ------------------------------------------------------------------- metrics
 def first_relevant_rank(ranked_ids: list[str], relevant: set[str]) -> int | None:
     for r, cid in enumerate(ranked_ids, 1):
         if cid in relevant:
@@ -45,7 +44,6 @@ def reciprocal_rank(rank: int | None, cutoff: int = CUTOFF) -> float:
     return 1.0 / rank if rank is not None and rank <= cutoff else 0.0
 
 
-# ---------------------------------------------------------------- validation
 def load_questions(path: Path) -> list[dict]:
     if not path.exists():
         raise FileNotFoundError(f"Question file not found: {path}")
@@ -87,7 +85,6 @@ def find_leaks(questions, index) -> list[str]:
     return warnings
 
 
-# ---------------------------------------------------------------------- main
 def evaluate(retriever, questions) -> dict:
     index = retriever.index
     texts = {c.id: normalise(c.text) for c in index.chunk_list}
@@ -156,7 +153,7 @@ def main(argv=None) -> int:
     retriever = Retriever(index, embedder)
 
     if embedder.is_standin:
-        print("*** STAND-IN EMBEDDER: results below are NOT reportable. ***\n")
+        print("Note: stand-in embedder, so these numbers are not meaningful.\n")
     for w in find_leaks(questions, index):
         print("WARNING (held-out leak):", w)
     res = evaluate(retriever, questions)

@@ -62,7 +62,7 @@ def make_client():
     if not key:
         raise MissingKeyError(
             "GROQ_API_KEY is not set. Get a free key from the Groq console and set it "
-            "as an environment variable (never paste it into code or chat).")
+            "as an environment variable.")
     from groq import Groq
     return Groq(api_key=key)
 
@@ -150,14 +150,14 @@ def stream_baseline(question: str, client=None, model: str = config.LLM_MODEL) -
 
 
 def generate_answer(question: str, hits, client=None, model: str = config.LLM_MODEL) -> str:
-    """Grounded answer: the model only sees the retrieved passages."""
+    """Answer from the retrieved passages (non-streaming)."""
     if not hits:
         return NO_CONTEXT
     return _chat(client or make_client(), model, build_messages(question, hits))
 
 
 def generate_baseline(question: str, client=None, model: str = config.LLM_MODEL) -> str:
-    """Same model with no retrieved passages, for side-by-side comparison."""
+    """Same model without the passages, for the side-by-side comparison."""
     messages = [{"role": "system", "content": BASELINE_PROMPT},
                 {"role": "user", "content": question}]
     return _chat(client or make_client(), model, messages)

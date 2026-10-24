@@ -1,10 +1,7 @@
-"""Embedding models.
+"""Embedding models: all-MiniLM-L6-v2 through sentence-transformers or ONNX Runtime.
 
-The real model is all-MiniLM-L6-v2 through sentence-transformers.
-
-HashingEmbedder is an OFFLINE STAND-IN used only to test the code where the
-real model cannot be downloaded. It is a bag-of-words hash, so it behaves
-much like keyword search. Results produced with it must never be reported.
+HashingEmbedder is a bag-of-words hash used by the tests, which run without downloading the
+model. It behaves like keyword search, so results from it are not meaningful.
 """
 from __future__ import annotations
 
@@ -41,12 +38,11 @@ class SentenceTransformerEmbedder:
 
 
 class OnnxEmbedder:
-    """The same all-MiniLM-L6-v2 model run through ONNX Runtime instead of PyTorch.
+    """all-MiniLM-L6-v2 through ONNX Runtime, which needs far less memory than PyTorch.
 
-    Uses a fraction of the memory (for small free servers). Reproduces sentence-transformers'
-    output: mean pooling over the attention mask, then L2 normalisation, inputs cut at 256 tokens.
-    It reports the same name as the PyTorch embedder because the vectors are the same, so an
-    index built with either one works with both (checked by tests/test_onnx_embedder.py).
+    Same steps as sentence-transformers (mean pooling over the attention mask, L2 normalisation,
+    256-token limit) and the same name, so an index built with either works with both
+    (checked in tests/test_light_backend.py).
     """
     is_standin = False
     MAX_TOKENS = 256
@@ -61,7 +57,7 @@ class OnnxEmbedder:
         self.tok.enable_truncation(max_length=self.MAX_TOKENS)
         self.tok.enable_padding()
         opts = ort.SessionOptions()
-        opts.intra_op_num_threads = 1  # small servers: avoid oversubscribing one shared core
+        opts.intra_op_num_threads = 1  # the free server has one shared core
         self.session = ort.InferenceSession(hf_hub_download(model_name, "onnx/model.onnx"), opts,
                                             providers=["CPUExecutionProvider"])
         self.inputs = {i.name for i in self.session.get_inputs()}
@@ -104,11 +100,8 @@ class HashingEmbedder:
 
 
 def get_embedder(name: str):
-    """Return an embedder. 'standin' gives the offline test stand-in.
-
-    There is deliberately no silent fallback: if the real model cannot load,
-    this raises instead of quietly switching to the stand-in.
-    """
+    """'standin' gives the test embedder. If the real model fails to load this raises,
+    rather than falling back to the stand-in."""
     if name in ("standin", STANDIN_NAME):
         return HashingEmbedder()
     if os.getenv("BOOTUP_EMBED_BACKEND") == "onnx":

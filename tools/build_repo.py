@@ -16,7 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / ".space_build" / "repo"
 
-FILES = ["app.py", "pytest.ini", "requirements.txt", "README.md", "DEMO.md", "run_app.bat",
+FILES = ["app.py", "pytest.ini", "requirements.txt", "README.md", "run_app.bat",
          "run_demo.bat", "run_demo.sh", ".streamlit/config.toml", "data/raw/README.md",
          "eval/questions.template.json",
          "frontend/index.html", "frontend/package.json", "frontend/package-lock.json",

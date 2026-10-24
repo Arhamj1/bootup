@@ -1,9 +1,7 @@
-"""BootUp HTTP API for the React frontend.   python -m server   (or run_app.bat)
+"""HTTP API for the React frontend:  python -m server
 
-Same pipeline as the Streamlit app (bootup/), exposed as JSON endpoints. /api/ask streams the
-answer as server-sent events: one "sources" event, then "token" events, then "done".
-Nothing here invents data: stats and evaluation results are read from what the build and
-evaluate scripts wrote to disk.
+/api/ask streams the answer as server-sent events: "sources", then "token" events, then "done".
+Statistics and evaluation results are read from the files the build and evaluate scripts write.
 """
 from __future__ import annotations
 
@@ -35,7 +33,7 @@ FRONTEND_DIST = config.ROOT / "frontend" / "dist"
 # Course files are named like "FALLSEM2025-26_VL_BCSE303L_00100_TH_2026-06-13_MODULE-3.pdf".
 COURSE_PREFIX = re.compile(r"^(FALL|WIN)SEM\d{4}-\d{2}_VL_[A-Z0-9]+_\d+_TH_\d{4}-\d{2}-\d{2}_")
 
-# --- public deployment (Hugging Face Space). All off unless the variables are set. -----------
+# Settings for the public site (Render). All off unless the variables are set.
 # BOOTUP_ACCESS_CODE  every /api call except /api/status must send it in the X-Access-Code header
 # BOOTUP_PUBLIC=1     disables rebuilding the index from the browser
 # BOOTUP_RATE_PER_MIN questions allowed per visitor per minute (0 = no limit)
@@ -46,7 +44,7 @@ RATE_PER_MIN = int(os.getenv("BOOTUP_RATE_PER_MIN", "12" if PUBLIC else "0"))
 
 
 def fetch_index_from_hub() -> None:
-    """On the Space the index is not in the image; pull it from a private dataset once."""
+    """The public server has no index of its own; download it from the private dataset once."""
     repo = os.getenv("BOOTUP_INDEX_REPO")
     if not repo or (config.INDEX_DIR / "meta.json").exists():
         return
@@ -64,7 +62,7 @@ def use_cached_model_offline() -> None:
         from huggingface_hub import try_to_load_from_cache
         if isinstance(try_to_load_from_cache(config.EMBED_MODEL, "config.json"), str):
             os.environ["HF_HUB_OFFLINE"] = "1"
-            import huggingface_hub.constants as hf_constants  # already imported above: set it too
+            import huggingface_hub.constants as hf_constants  # read at import time, so set it here too
             hf_constants.HF_HUB_OFFLINE = True
     except Exception:
         pass  # stand-in embedder, or huggingface_hub missing: leave the default behaviour
@@ -106,7 +104,7 @@ class State:
                 try:
                     self.retriever = Retriever(Index(config.INDEX_DIR, emb), emb)
                     self.index_error = None
-                except Exception as exc:  # no index built yet, or embedder mismatch
+                except Exception as exc:  # no index yet, or built with another model
                     self.index_error = str(exc)
                     raise HTTPException(409, f"No index loaded ({exc}). Build the index first.")
             return self.retriever
@@ -119,7 +117,6 @@ class State:
 state = State()
 
 
-# ------------------------------------------------------------------ helpers
 def short_name(source_file: str) -> str:
     return COURSE_PREFIX.sub("", source_file.split("/")[-1])
 
@@ -140,10 +137,9 @@ def sse(event: str, data) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
-# ---------------------------------------------------------------------- app
 @asynccontextmanager
 async def lifespan(_app):
-    # Load the embedding model and index in the background so the first page load is quick.
+    # Load the model and index in the background so the first page load is quick.
     def warm():
         try:
             state.get_retriever()
@@ -342,7 +338,6 @@ def eval_run(name: str):
     return json.loads(path.read_text())
 
 
-# ------------------------------------------------------- built frontend (optional)
 if FRONTEND_DIST.exists():
     app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
 

@@ -40,7 +40,7 @@ export function Rise({ children, index = 0, className, as = "div" }: {
   );
 }
 
-/** Double-bezel container: outer shell (tray) + inner core (plate). */
+/** Card with an outer border and an inner panel. */
 export function Card({ children, className, coreClassName, id }: {
   children: ReactNode; className?: string; coreClassName?: string; id?: string;
 }) {

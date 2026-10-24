@@ -176,7 +176,7 @@ export default function App() {
   );
 }
 
-/** Status light + popover with the real backend state and the theme choice. */
+/** Status light with a popover for server state and theme. */
 function StatusMenu({ status, error, theme }: {
   status: Status | null; error: string | null; theme: { pref: ThemePref; setPref: (p: ThemePref) => void };
 }) {
@@ -196,7 +196,7 @@ function StatusMenu({ status, error, theme }: {
     <div ref={box} className="relative shrink-0">
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={`Status: ${label}`}
         className="flex items-center gap-2 rounded-full bg-muted px-3 py-2 text-[12px] font-medium text-ink-2 ring-1 ring-line hover:text-ink">
-        {/* The dot shows real backend state: ready, loading or a problem. */}
+        {/* ready, loading or error */}
         <span className={cx("h-2 w-2 rounded-full", state === "ready" ? "bg-accent" : state === "loading" ? "animate-pulse bg-ink-3 motion-reduce:animate-none" : "bg-ink")} />
         <span className="hidden md:inline">{label}</span>
       </button>

@@ -61,8 +61,7 @@ def main(argv=None) -> int:
 
     embedder = get_embedder(args.embedder)
     if embedder.is_standin:
-        print("\n*** OFFLINE STAND-IN EMBEDDER: for testing the code only. "
-              "Do not report results from this index. ***\n")
+        print("Note: stand-in embedder, for testing the code only.\n")
     try:
         stats = run_build(args.data_dir, args.index_dir, embedder)
     except ValueError as exc:

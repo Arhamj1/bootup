@@ -1,4 +1,4 @@
-"""Tiny synthetic corpus used ONLY for testing the code. It is not the project dataset."""
+"""A tiny synthetic corpus for the tests (not the course material)."""
 import json
 from pathlib import Path
 

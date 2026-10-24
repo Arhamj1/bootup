@@ -1,18 +1,14 @@
-"""All tunable settings in one place.
-
-Change values here (or override the paths / model names with environment
-variables) instead of hunting through the code.
-"""
+"""Settings. Paths and model names can also be set with environment variables."""
 import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-# --- models -----------------------------------------------------------------
+# Models
 EMBED_MODEL = os.getenv("BOOTUP_EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 LLM_MODEL = os.getenv("BOOTUP_LLM_MODEL", "openai/gpt-oss-20b")
 
-# --- chunking ---------------------------------------------------------------
+# Chunking
 # Sizes are approximate: tokens are converted to words with WORDS_PER_TOKEN.
 # all-MiniLM-L6-v2 ignores input beyond 256 tokens, so stay well below that.
 CHUNK_TOKENS = 200
@@ -21,12 +17,12 @@ OVERLAP_FRACTION = 0.15
 MIN_MERGE_WORDS = 40        # consecutive slides shorter than this get merged
 DEDUPE_THRESHOLD = 0.95     # cosine similarity above which chunks count as duplicates
 
-# --- retrieval --------------------------------------------------------------
+# Retrieval
 TOP_K_EACH = 10             # chunks taken from each retriever before fusion
 TOP_K_FINAL = 4             # chunks passed to the LLM after fusion
 RRF_K = 60
 
-# --- generation -------------------------------------------------------------
+# Generation
 TEMPERATURE = 0.2
 # For reasoning models (gpt-oss) this budget also covers the hidden reasoning, which can use
 # several hundred tokens on calculation questions before any answer text is written.
@@ -37,9 +33,7 @@ REASONING_MODEL_PREFIXES = ("openai/gpt-oss",)
 QUERY_EXPANSION = os.getenv("BOOTUP_QUERY_EXPANSION", "1") != "0"
 EXPAND_MAX_TOKENS = 600
 
-# --- demo ---------------------------------------------------------------------
-# Clickable example questions in the app, taken from the course slides; each one is
-# answered from data/raw/course/.
+# Example questions shown on the start page (taken from the course slides).
 DEMO_QUESTIONS = [
     "What are the four necessary conditions for a deadlock?",
     "How does the Bakery algorithm decide which process enters the critical section?",
@@ -49,11 +43,11 @@ DEMO_QUESTIONS = [
     "What is the difference between a monolithic kernel and a microkernel?",
 ]
 
-# --- paths ------------------------------------------------------------------
+# Paths
 DATA_DIR = Path(os.getenv("BOOTUP_DATA_DIR", ROOT / "data" / "raw"))
 INDEX_DIR = Path(os.getenv("BOOTUP_INDEX_DIR", ROOT / "index"))
 EVAL_FILE = Path(os.getenv("BOOTUP_EVAL_FILE", ROOT / "eval" / "questions.json"))
 RESULTS_DIR = Path(os.getenv("BOOTUP_RESULTS_DIR", ROOT / "eval" / "results"))
 
-# Sub-folders of DATA_DIR that mean something.
+# Top-level folders under DATA_DIR that set a chunk's source type.
 SOURCE_TYPES = ("course", "open", "qa_bank")

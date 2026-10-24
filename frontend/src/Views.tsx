@@ -160,7 +160,7 @@ export function DatasetView({ onRebuilt, canRebuild = true }: { onRebuilt: () =>
   const maxTopic = Math.max(1, ...topics.map(([, n]) => n));
   return (
     <>
-      <PageTitle title="Dataset" sub="Real counts from the last index build. Nothing here is estimated." />
+      <PageTitle title="Dataset" sub="Counts from the last index build." />
       {err && !stats && <Empty icon={Database} title="No statistics yet">{err}{canRebuild && " Use Rebuild index below."}</Empty>}
       {stats && (
         <>
@@ -322,9 +322,10 @@ export function HowView({ status }: { status: Status | null }) {
     ["Index", `Embed with ${status?.embedder ?? "the embedding model"}, drop near-duplicates, store in ChromaDB, and build a BM25 index over the same chunks.`],
   ];
   const online = [
-    ["Search", `Take the top ${s?.top_k_each ?? "?"} chunks from dense search and from BM25.`],
+    ["Rewrite", "Turn the question into textbook keywords, so everyday wording still finds the right section."],
+    ["Search", `Take the top ${s?.top_k_each ?? "?"} chunks from dense search and from BM25, using the question plus those keywords.`],
     ["Fuse", `Merge the two rankings with Reciprocal Rank Fusion: score = sum of 1 / (${s?.rrf_k ?? "?"} + rank).`],
-    ["Answer", `Send the best ${s?.top_k_final ?? "?"} passages to ${status?.llm_model ?? "the model"} with instructions to answer only from them and cite them as [1], [2].`],
+    ["Answer", `Send the best ${s?.top_k_final ?? "?"} passages to ${status?.llm_model ?? "the model"} as the main source, cited as [1], [2]. Anything they do not cover is marked "(general knowledge)".`],
     ["Show", "Stream the answer as it is written, with its sources and their rank in each method."],
   ];
   const Block = ({ title, rows }: { title: string; rows: string[][] }) => (
@@ -342,7 +343,7 @@ export function HowView({ status }: { status: Status | null }) {
   );
   return (
     <>
-      <PageTitle title="How it works" sub="A retrieval-grounded pipeline: search your material two ways, merge the results, and answer only from what was found." />
+      <PageTitle title="How it works" sub="Search your material two ways, merge the results, and answer from what was found." />
       <div className="grid gap-4 lg:grid-cols-2">
         <Block title="When the index is built" rows={offline} />
         <Block title="When you ask a question" rows={online} />

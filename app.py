@@ -1,9 +1,4 @@
-"""BootUp demo app.   streamlit run app.py
-
-Tabs: Ask | History | Compare retrieval | Dataset | Evaluation | How it works
-Nothing on screen is invented: the Dataset and Evaluation tabs only show what
-the build and evaluate scripts actually wrote to disk.
-"""
+"""Streamlit version of BootUp (the first interface, kept as a fallback):  streamlit run app.py"""
 import json
 import os
 import re
@@ -40,9 +35,7 @@ MODE_HELP = {"hybrid": "Merges both rankings with Reciprocal Rank Fusion.",
              "dense": "Matches meaning, even when the wording differs.",
              "bm25": "Matches exact terms such as Banker's or Bakery."}
 
-# Theme colors, fonts and the base radius come from .streamlit/config.toml. This layer adds the
-# header, the segmented tab bar, cards and the answer reveal. Radius rule: controls 10px,
-# panels and cards 14px. The accent is the same teal as the theme (lighter in dark mode).
+# Colours and fonts come from .streamlit/config.toml; this adds the header, tab bar and cards.
 st.markdown("""
 <style>
 :root { --bu-accent: #0F766E; --bu-on-accent: #F7FFFD; --bu-surface: #FDFDFD;
@@ -165,7 +158,6 @@ try:
 except Exception as exc:
     index_error = str(exc)
 
-# Header chips only show numbers the build actually wrote to disk.
 chips = ['<span class="bu-chip">BCSE303L Operating Systems</span>']
 _stats_path = config.INDEX_DIR / "stats.json"
 if _stats_path.exists():
@@ -179,14 +171,13 @@ header.markdown(f"""
   <div class="bu-mark" aria-hidden="true">B</div>
   <div>
     <div class="bu-title" role="heading" aria-level="1">BootUp</div>
-    <div class="bu-sub">An Operating Systems study assistant that answers only from the loaded
+    <div class="bu-sub">An Operating Systems study assistant that answers from the loaded
       course material and shows where every answer came from.</div>
   </div>
   <div class="bu-meta">{"".join(chips)}</div>
 </div>
 """, unsafe_allow_html=True)
 
-# ------------------------------------------------------------------ sidebar
 with st.sidebar:
     st.subheader("Settings")
     mode = st.segmented_control("Retrieval method", MODES, default=MODES[0], required=True,
@@ -217,7 +208,6 @@ ask_tab, hist_tab, cmp_tab, data_tab, eval_tab, how_tab = st.tabs(
     ["Ask", "History", "Compare retrieval", "Dataset", "Evaluation", "How it works"])
 
 
-# --------------------------------------------------------------------- Ask
 def show_sources(hits, cited, method, expanded, uid):
     with st.expander(f"Sources: {len(hits)} passages, {METHOD_LABELS[method]}",
                      expanded=expanded, icon=":material/description:"):
@@ -289,7 +279,7 @@ with ask_tab:
     else:
         with st.container(key="askpanel"):
             st.markdown('<div class="bu-ask-title">Ask about your course</div>'
-                        '<div class="bu-ask-sub">Answers come only from your slides and notes, '
+                        '<div class="bu-ask-sub">Answers come from your slides, notes and textbook, '
                         'with the slide or page they came from.</div>', unsafe_allow_html=True)
             typed = st.chat_input("Ask an Operating Systems question")
             st.markdown('<div class="bu-label">Or start with one of these</div>',
@@ -308,7 +298,6 @@ with ask_tab:
             with st.container(key="latest"):
                 render_turn(st.session_state.turns[-1], latest=True, uid="ask")
 
-# ------------------------------------------------------------------ History
 with hist_tab:
     turns = st.session_state.turns
     if not turns:
@@ -323,7 +312,6 @@ with hist_tab:
             st.markdown(f"**Q{n}**")
             render_turn(t, latest=False, uid=f"h{n}")
 
-# --------------------------------------------------------- Compare retrieval
 with cmp_tab:
     st.markdown("The same question searched three ways, top 5 each. Passages that appear in "
                 "both the dense and the BM25 list are marked **both**. Keyword-heavy questions "
@@ -357,7 +345,6 @@ with cmp_tab:
                                     help=c.source_file)
                         st.caption(short(c.text, 200))
 
-# ------------------------------------------------------------------ Dataset
 with data_tab:
     stats_path = config.INDEX_DIR / "stats.json"
     if stats_path.exists():
@@ -408,7 +395,6 @@ with data_tab:
                            f"{built['files_used']} files.")
                 st.rerun()
 
-# --------------------------------------------------------------- Evaluation
 with eval_tab:
     runs = sorted(config.RESULTS_DIR.glob("results_*.json")) if config.RESULTS_DIR.exists() else []
     if not runs:
@@ -447,7 +433,6 @@ with eval_tab:
         st.caption(f"With {n} questions, a difference of one or two questions between methods "
                    "is not strong evidence either way.")
 
-# ------------------------------------------------------------- How it works
 with how_tab:
     st.markdown(f"""
 **Offline (when the index is built)**
@@ -461,9 +446,10 @@ with how_tab:
    BM25 keyword index over the same chunks.
 
 **At question time**
-1. Search both indexes: top {config.TOP_K_EACH} from each.
-2. Merge with Reciprocal Rank Fusion: score = sum of 1 / ({config.RRF_K} + rank).
-3. Send the best passages to {config.LLM_MODEL} with instructions to answer only from them and
-   cite them as [1], [2].
-4. Show the answer with its sources and their ranks in each method.
+1. Rewrite the question into textbook keywords.
+2. Search both indexes with the question and keywords: top {config.TOP_K_EACH} from each.
+3. Merge with Reciprocal Rank Fusion: score = sum of 1 / ({config.RRF_K} + rank).
+4. Send the best passages to {config.LLM_MODEL}, which cites them as [1], [2] and marks
+   anything else as general knowledge.
+5. Show the answer with its sources and their ranks in each method.
 """)

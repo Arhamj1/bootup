@@ -3,9 +3,8 @@
 @import "@fontsource-variable/geist-mono";
 @import "katex/dist/katex.min.css";
 
-/* Design tokens. One accent (teal). Dark is the signature look ("Ethereal Glass");
-   light is a silver "Soft Structuralism" variant.
-   Radius rule: shells 28px, cores 22px, inner tiles 12px, buttons and chips fully round. */
+/* Colours for light mode (dark mode below). One teal accent.
+   Corner radii: cards 28px, inner panels 22px, tiles 12px, buttons fully round. */
 :root {
   --bg: #f3f4f5;
   --shell: rgba(18, 22, 28, 0.035);
@@ -80,7 +79,7 @@ body {
   -webkit-font-smoothing: antialiased;
   font-feature-settings: "ss01", "cv11";
 }
-/* Ambient glow and film grain live on fixed, non-interactive layers (no repaint on scroll). */
+/* Background glow and grain on fixed layers, so scrolling does not repaint them. */
 body::before {
   content: "";
   position: fixed;
@@ -105,7 +104,7 @@ body::after {
 h1, h2, h3 { text-wrap: balance; }
 p { text-wrap: pretty; }
 
-/* Double-bezel: outer shell (tray) + inner core (plate). */
+/* Card: outer border + inner panel. */
 .shell { background: var(--shell); box-shadow: inset 0 0 0 1px var(--shell-ring), var(--shadow); padding: 6px; border-radius: 28px; }
 .core { background: var(--core); border-radius: 22px; box-shadow: inset 0 1px 0 var(--core-hi), inset 0 0 0 1px var(--line); }
 .glass { background: color-mix(in srgb, var(--core) 72%, transparent); backdrop-filter: blur(18px) saturate(1.4);

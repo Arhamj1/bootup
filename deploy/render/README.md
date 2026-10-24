@@ -1,6 +1,6 @@
 # BootUp
 
-An Operating Systems study assistant that answers only from the loaded course material and shows
+An Operating Systems study assistant that answers from the loaded course material and shows
 which slide or page each answer came from. Hybrid retrieval (embeddings + BM25, fused with
 Reciprocal Rank Fusion); answers streamed from a Groq-hosted model.
 
